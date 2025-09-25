@@ -99,15 +99,14 @@ app.post("/stores", async (req, res) => {
   }
 });
 
-// READ: GET /stores/:id (retorna loja + user + produtos)
-app.get("/stores/:id", async (req, res) => {
+// READ: GET /stores (lista todas as lojas)
+app.get("/stores", async (_req, res) => {
   try {
-    const store = await prisma.store.findUnique({
-      where: { id: Number(req.params.id) },
+    const stores = await prisma.store.findMany({
       include: { user: true, products: true },
+      orderBy: { id: "asc" }
     });
-    if (!store) return res.status(404).json({ error: "Loja não encontrada" });
-    res.json(store);
+    res.json(stores);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
